@@ -3,24 +3,10 @@ import json
 
 db = SQLAlchemy()
 
-
-class BaseModel(db.Model):
-    __abstract__ = True
-
-    def __init__(self, **kwargs):
-        columnas_filtradas = {key: kwargs[key] for key in kwargs if key in self.__table__.columns.keys()}
-        for key, value in columnas_filtradas.items():
-            setattr(self, key, value)
-
-    def to_json(self):
-        return json.dumps({column.name: getattr(self, column.name) for column in self.__table__.columns})
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} {self.to_json()}>"
     
 
 
-class User(BaseModel):
+class User(db.Model):
     __tablename__ = "User"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -30,8 +16,6 @@ class User(BaseModel):
 
     favorites = db.relationship("Favorite", backref= "User", lazy=True)
 
-    def __repr__(self):
-        return '<User %r>' % self.username
 
     def serialize(self):
         return {
@@ -42,7 +26,7 @@ class User(BaseModel):
 
 
 
-class People(BaseModel):
+class People(db.Model):
     __tablename__ = "Person"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -61,7 +45,7 @@ class People(BaseModel):
     
     def serialize(self):
         return {
-           "person_id": self.id,
+            "person_id": self.id,
             "birth_year": self.birth_year,
             "eye_color": self.eye_color,
             "gender": self.gender,
@@ -75,7 +59,7 @@ class People(BaseModel):
         }
 
 
-class Planets(BaseModel):
+class Planets(db.Model):
     __tablename__ = "Planets"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -111,7 +95,7 @@ class Planets(BaseModel):
 
 
 
-class Favorite(BaseModel):
+class Favorite(db.Model):
     __tablename__ = "Favorite"
 
     id = db.Column(db.Integer, primary_key=True)
